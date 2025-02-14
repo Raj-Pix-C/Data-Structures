@@ -12,7 +12,7 @@ int main(){
     cin >> target;
     cout << endl;
 
-    while (low < high){
+    while (low <= high){
         mid = (low + high) / 2;
 
         if(target < arr[mid]){
@@ -21,7 +21,7 @@ int main(){
         else if(target > arr[mid]){
             low = mid + 1;
         }
-        else{
+        else if(target == arr[mid]){
             cout << "Target found at index: " << mid << endl;
             exit(0);
         }
