@@ -9,8 +9,6 @@ typedef struct Node{
 }Node;
 
 Node * CreateNode(int data){
-    Node * CurrentNode;
-
     Node * NewNode = (Node *) malloc(sizeof(Node));
 
     if(NewNode == NULL){
