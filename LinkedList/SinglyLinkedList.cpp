@@ -29,14 +29,14 @@ void insertAtBeginning(Node ** head, int data){
     return;
 }
 
-void insertAtEnd(Node ** tail, int data){
+void insertAtEnd(Node ** head, int data){
     Node * NewNode = CreateNode(data);
 
-    if(*tail == NULL){
-        *tail = NewNode;
+    if(*head == NULL){
+        *head = NewNode;
         return;
     }
-    Node * temp = *tail;
+    Node * temp = *head;
     while(temp->next != NULL){
         temp = temp->next;
     }
