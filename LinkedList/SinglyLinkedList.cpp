@@ -1,140 +1,160 @@
-#include<iostream>
+#include<stdio.h>
 #include<stdlib.h>
-using namespace std;
 
-
-typedef struct Node{
+typedef struct node{
     int data;
-    Node * next;
-}Node;
+    node * next;
+}node;
 
-Node * CreateNode(int data){
-    Node * NewNode = (Node *) malloc(sizeof(Node));
+node * createNode(int data){
+    node * newNode = (node *) malloc(sizeof(node));
 
-    if(NewNode == NULL){
-        cout << "No new node allocated\n";
+    if(newNode == NULL){
+        puts("Failed to create node");
         exit(0);
     }
-    NewNode->data = data;
-    NewNode->next = NULL;
 
-    return NewNode;
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
 }
 
-void insertAtBeginning(Node ** head, int data){
-    Node * NewNode = CreateNode(data);
+void insertNode(node ** head, int data, int pos){
+    node * newNode = createNode(data);
 
-    NewNode->next = *head;
-    *head = NewNode;
-    return;
+    if(!pos){ // insert at front of list
+        newNode->next = *head;
+        *head = newNode;
+    }
+    else{ // instert at back of list
+        if(*head == NULL){ // If list is empty, insert as first node
+            *head = newNode;
+        }
+        else{
+            node * temp = *head;
+
+            while(temp->next != NULL){
+                temp = temp->next;
+            }
+
+            temp->next = newNode;
+        }
+    }
 }
 
-void insertAtEnd(Node ** head, int data){
-    Node * NewNode = CreateNode(data);
-
+void deleteNode(node ** head, int key){
     if(*head == NULL){
-        *head = NewNode;
+        puts("List is empty");
         return;
     }
-    Node * temp = *head;
-    while(temp->next != NULL){
-        temp = temp->next;
-    }
-    temp->next = NewNode;
-    return;
-}
 
-void deleteNode(Node ** head, int key){
-    Node * temp = *head;
-    Node * prev = NULL;
-    if (temp != NULL && temp->data == key){
+    node * temp = *head;
+    node * prev = NULL;
+
+    if(temp->data == key){
         *head = temp->next;
         free(temp);
-        cout << "Node with key=" << key << " deleted.\n";
         return;
     }
 
-    while (temp != NULL && temp->data != key){
+    while(temp != NULL && temp->data != key){
         prev = temp;
         temp = temp->next;
     }
-    if (temp == NULL) {
-        cout << "Node with key=" << key << " not found.\n";
+
+    if(temp == NULL){
+        printf("Node with data %d not found\n", key);
+    }
+    else{
+        prev->next = temp->next;
+        free(temp);
+        printf("Node with data %d deleted\n", key);
+    }
+}
+
+void printList(node ** head){
+    if(*head == NULL){
+        puts("List is empty");
         return;
     }
 
-    prev->next = temp->next;
-    free(temp);
-    cout << "Node with key=" << key << " deleted\n";
-}
+    node * temp = *head;
 
-void searchNode(Node * head, int key){
-    Node * temp = head;
-    while (temp != NULL){
-        if(temp->data == key){
-            cout << "Node found\n";
-            return;
-        }
+    while(temp != NULL){
+        printf("%d", temp->data);
+        temp->next != NULL ? printf(" -> ") : puts("");
         temp = temp->next;
     }
-    cout << "Node not found.\n";
     return;
 }
 
-void displayList(Node * head){
-    if(head == NULL){
-        cout << "Empty list.\n";
-        return;
+void freeList(node ** head){
+    node * temp = *head;
+
+    while(temp != NULL){
+        node * nextNode = temp->next;
+        free(temp);
+        temp = nextNode;
     }
-    Node * temp = head;
-    while (temp != NULL){
-        cout << temp->data;
-        temp = temp->next;
-        if(temp != NULL)
-            cout << " -> ";
-    }
-    cout << endl;
-    return;    
+
+    *head = NULL;
+    return;
 }
 
+void menu(node ** head){
+    // system("cls");
+
+    puts("Linked List Operations:");
+
+    puts("1. Insert Node");
+    puts("2. Delete Node");
+    puts("3. Print List");
+    puts("4. Free List");
+    puts("5. Exit");
+
+    puts("Enter your choice:");
+
+    int choice;
+    scanf("%d", &choice);
+
+    switch(choice){
+        case 1: {
+            int data, pos;
+            puts("Enter data to insert:");
+            scanf("%d", &data);
+            puts("Enter position (0 for front, 1 for back):");
+            scanf("%d", &pos);
+            insertNode(head, data, pos);
+            break;
+        }
+        case 2: {
+            int key;
+            puts("Enter data of node to delete:");
+            scanf("%d", &key);
+            deleteNode(head, key);
+            break;
+        }
+        case 3:
+            printList(head);
+            break;
+        case 4:
+            freeList(head);
+            puts("List freed.");
+            break;
+        case 5:
+            exit(0);
+        default:
+            puts("Invalid choice. Try again.");
+            menu(head);
+    }
+}
 
 int main(){
+    node * head = NULL;
 
-    Node * Head = NULL;
-    int value, choice;
+    while(1)menu(&head);
 
-    do{
-        cout << "Choose number from menu for operation\n\n";
-        cout << "1.Insert at beginning\n2.Insert at end\n";
-        cout << "3.Delete a node\n4.Search a key\n";
-        cout << "5.Display list\n6.Exit\n";
-        cin >> choice;
-
-        if(choice == 1){
-            cout << "Enter the Value of the node:";
-            cin >> value;
-            insertAtBeginning(&Head, value);
-        }
-        else if(choice == 2){
-            cout << "Enter the Value of the node:";
-            cin >> value;
-            insertAtEnd(&Head, value);
-        }
-        else if(choice == 3){
-            cout << "Enter the Value of the node:";
-            cin >> value;
-            deleteNode(&Head, value);
-        }
-        else if(choice == 4){
-            cout << "Enter the Value of the node:";
-            cin >> value;
-            searchNode(Head, value);
-        }
-        else if(choice == 5){
-            displayList(Head);
-        }
-        else exit(0);
-    }while(choice);
-
+    freeList(&head); // Free the list before exiting
     return 0;
 }
