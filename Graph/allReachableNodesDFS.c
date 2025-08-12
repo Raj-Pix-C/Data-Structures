@@ -9,7 +9,7 @@ bool isEmpty(){
     return top == -1;
 }
 void push(int data){
-    if(top == MX){
+    if(top == MX-1){
         puts("Stack Overflow!");
         return;
     }
